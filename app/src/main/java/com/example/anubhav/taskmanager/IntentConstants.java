@@ -10,5 +10,5 @@ public class IntentConstants {
     public static final String to_do_time="to_do_time";
     public static final String to_do_date="to_do_date";
     public static final String to_do_id="to_do_id";
-    public static final String to_do_category = "to_do_category";
+    public static final String to_do_category="to_do_category";
 }

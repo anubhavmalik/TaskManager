@@ -69,8 +69,9 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
             @Override
             public void onClick(View v) {
                 Calendar newCalendar = Calendar.getInstance();
-                int initialmonth = newCalendar.get(java.util.Calendar.MONTH);  // Current month
-                int initialyear = newCalendar.get(java.util.Calendar.YEAR);   // Current year
+                int initialmonth = newCalendar.get(java.util.Calendar.MONTH);
+                int initialyear = newCalendar.get(java.util.Calendar.YEAR);
+
                 showDatePicker(ToDoDetails.this, initialyear, initialmonth, 1);
             }
         });
@@ -83,7 +84,7 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
                 String new_date = datetextview.getText().toString();
                 String new_detail = detailtextview.getText().toString();
                 String new_time = timetextview.getText().toString();
-                String new_category = spinner_textView.getText().toString();
+                String new_category = spinner.getSelectedItem().toString();
 
                 if (new_title.length() != 0) {
 
@@ -101,7 +102,7 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
                         database.insert(toDoOpenHelper.tablename, null, contentValues);
                     }
                     setResult(RESULT_OK);
-                    Snackbar.make(v, "Task saved successfully", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Task saved.", Snackbar.LENGTH_SHORT).show();
                     Handler h = new Handler();
                     h.postDelayed(new Runnable() {
                         @Override
@@ -111,7 +112,7 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
                     }, 1000);
 
                 } else {
-                    titletextview.setError("This field can't be left empty");
+                    titletextview.setError("Title can't be empty.");
                 }
             }
         });
@@ -162,8 +163,7 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
         if (category_text.equals("Custom") || category_text == "Custom") {
             final EditText input = new EditText(this);
             AlertDialog.Builder builder = new AlertDialog.Builder(ToDoDetails.this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             input.setLayoutParams(layoutParams);
             builder.setView(input);
             builder.setIcon(R.drawable.circle_drawable);
@@ -179,7 +179,6 @@ public class ToDoDetails extends AppCompatActivity implements AdapterView.OnItem
                     String new_category_text = input.getText().toString();
                     new_category_text = category_text;
                     spinner.setSelection(6, true);
-
                 }
             });
 

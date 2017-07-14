@@ -1,34 +1,36 @@
 package com.example.anubhav.taskmanager;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<ToDoItem> arrayList;
-    ListView listView;
-    ToDoAdapter toDoAdapter;
-    int ADD_REQUEST = 10, EDIT_REQUEST = 10;
-    int exit_count = 0;
+    int ADD_REQUEST = 10, EDIT_REQUEST = 10, UNDO_FLAG = 0, exit_count = 0;
+    RecyclerAdapter recyclerAdapter;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +38,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        listView = (ListView) findViewById(R.id.list_item);
-        arrayList = new ArrayList<ToDoItem>();
-        toDoAdapter = new ToDoAdapter(this, arrayList);
-        updateDatabase();
-        listView.setAdapter(toDoAdapter);
-        toDoAdapter.notifyDataSetChanged();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        toolbar.setTitle("To-Do Manager");
+        arrayList = new ArrayList<>();
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+
+        recyclerAdapter = new RecyclerAdapter(this, arrayList, new RecyclerAdapter.ToDoClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(View view, int position) {
                 Intent i = new Intent(MainActivity.this, ToDoDetails.class);
                 i.putExtra(IntentConstants.to_do_title, arrayList.get(position).title);
                 i.putExtra(IntentConstants.to_do_date, arrayList.get(position).date);
@@ -53,38 +54,85 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra(IntentConstants.to_do_id, arrayList.get(position).id);
                 i.putExtra(IntentConstants.to_do_category, arrayList.get(position).category);
                 startActivityForResult(i, EDIT_REQUEST);
+
+
+//        }, new RecyclerAdapter.ToDoLongClickListener() {
+//            @Override
+//            public void onItemLongClick(View view, final int position) {
+//                final int pos = position;
+//                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setTitle("Accomplished");
+//                builder.setCancelable(false);
+//                builder.setMessage(arrayList.get(position).title + " is accomplished ?");
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//
             }
+//                });
+//
+//                builder.setPositiveButton("okay", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
+//                        SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
+//                        db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(pos).id + ""});
+//                        arrayList.remove(pos);
+//                        recyclerAdapter.notifyItemRemoved(pos);
+//                    }
+//                });
+//                builder.create();
+//                builder.show();
+//            }
+
         });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+
+
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final int pos = position;
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Accomplished");
-                builder.setMessage(arrayList.get(position).title + " is accomplished ?");
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int from = viewHolder.getAdapterPosition();
+                int to = target.getAdapterPosition();
+                Collections.swap(arrayList, from, to);
+                recyclerAdapter.notifyItemMoved(from, to);
+                databaseSwap(from, to);
 
-                    }
-                });
 
-                builder.setPositiveButton("okay", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
-                        SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
-                        db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(pos).id + ""});
-                        arrayList.remove(pos);
-                        toDoAdapter.notifyDataSetChanged();
-                    }
-                });
-                builder.create();
-                builder.show();
                 return true;
             }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                UNDO_FLAG = 0;
+
+                Snackbar.make(recyclerView, "Task Removed", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                UNDO_FLAG = undoClicked();
+                            }
+                        }).setActionTextColor(Color.BLUE).show();
+                if (UNDO_FLAG == 1) {
+                    ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
+                    SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
+                    db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(position).id + ""});
+                    arrayList.remove(position);
+                    recyclerAdapter.notifyItemRemoved(position);
+                } else {
+                    Snackbar.make(recyclerView, "Reverted !", Snackbar.LENGTH_SHORT).show();
+                }
+            }
         });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        updateDatabase();
+        recyclerAdapter.notifyDataSetChanged();
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -102,8 +150,23 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
 
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) findViewById(R.id.search_item);
+
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                recyclerAdapter.filter(newText);
+                recyclerAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -115,14 +178,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
-
         if (id == R.id.feedback) {
             Intent i = new Intent();
             i.setAction(Intent.ACTION_SENDTO);
             Uri uri = Uri.parse("mail_to:anubhavmalikdeveloper@gmail.com");
             i.setData(uri);
-            i.putExtra(Intent.EXTRA_SUBJECT, "Feedback for Todo app");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Feedback for app");
             startActivity(i);
         }
         if (id == R.id.about) {
@@ -131,22 +192,6 @@ public class MainActivity extends AppCompatActivity {
             i.getAction();
         }
 
-        if (id == R.id.app_bar_search) {
-            SearchView searchView = (SearchView) item.getActionView();
-
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    toDoAdapter.getFilter().filter(newText);
-                    return true;
-                }
-            });
-        }
 
         return true;
     }
@@ -156,7 +201,9 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase database = toDoOpenHelper.getReadableDatabase();
         Cursor cursor = database.query(toDoOpenHelper.tablename, null, null, null, null, null, null);
         arrayList.clear();
+        int position = 0;
         while (cursor.moveToNext()) {
+
             String title = cursor.getString(cursor.getColumnIndex(toDoOpenHelper.title));
             String detail = cursor.getString(cursor.getColumnIndex(toDoOpenHelper.detail));
             String date = cursor.getString(cursor.getColumnIndex(toDoOpenHelper.date));
@@ -165,9 +212,10 @@ public class MainActivity extends AppCompatActivity {
             int id = cursor.getInt(cursor.getColumnIndex(toDoOpenHelper.id));
             ToDoItem toDoItem = new ToDoItem(id, title, date, time, detail, category);
             arrayList.add(toDoItem);
+            recyclerAdapter.notifyItemInserted(position);
+            position++;
         }
-        toDoAdapter.notifyDataSetChanged();
-
+        recyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -178,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
             if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Details not saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No details changed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -191,5 +239,39 @@ public class MainActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    public int undoClicked() {
+        return 1;
+    }
+
+    public void databaseSwap(int pos1, int pos2) {
+        ToDoOpenHelper toDoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
+        SQLiteDatabase database = toDoOpenHelper.getWritableDatabase();
+        ToDoItem item1 = arrayList.get(pos1);
+        ToDoItem item2 = arrayList.get(pos2);
+        String title1 = item2.title, date1 = item2.date, time1 = item2.time, detail1 = item2.details, category1 = item2.category;
+        String title2 = item1.title, date2 = item1.date, time2 = item1.time, detail2 = item1.details, category2 = item1.category;
+
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(toDoOpenHelper.title, title1);
+        contentValues.put(toDoOpenHelper.date, date1);
+        contentValues.put(toDoOpenHelper.time, time1);
+        contentValues.put(toDoOpenHelper.detail, detail1);
+        contentValues.put(toDoOpenHelper.category, category1);
+        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item2.id + ""});
+
+
+        contentValues = new ContentValues();
+        contentValues.put(toDoOpenHelper.title, title2);
+        contentValues.put(toDoOpenHelper.date, date2);
+        contentValues.put(toDoOpenHelper.time, time2);
+        contentValues.put(toDoOpenHelper.detail, detail2);
+        contentValues.put(toDoOpenHelper.category, category2);
+        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item1.id + ""});
+
+
+        updateDatabase();
     }
 }

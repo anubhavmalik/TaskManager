@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -96,10 +97,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                int from = viewHolder.getAdapterPosition();
-                int to = target.getAdapterPosition();
+                final int from = viewHolder.getAdapterPosition();
+                final int to = target.getAdapterPosition();
                 Collections.swap(arrayList, from, to);
                 recyclerAdapter.notifyItemMoved(from, to);
+//                Handler h= new Handler();
+//                h.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                    }
+//                },1000);
+
                 databaseSwap(from, to);
 
 
@@ -108,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 UNDO_FLAG = 0;
 
                 Snackbar.make(recyclerView, "Task Removed", Snackbar.LENGTH_LONG)
@@ -116,19 +124,29 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 UNDO_FLAG = undoClicked();
+                                updateDatabase();
                             }
                         }).setActionTextColor(Color.BLUE).show();
-                if (UNDO_FLAG == 1) {
-                    ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
-                    SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
-                    db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(position).id + ""});
-                    arrayList.remove(position);
-                    recyclerAdapter.notifyItemRemoved(position);
-                } else {
-                    Snackbar.make(recyclerView, "Reverted !", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        });
+
+                Handler h= new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (UNDO_FLAG ==0) {
+                            ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
+                            SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
+                            db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(position).id + ""});
+                            arrayList.remove(position);
+                            recyclerAdapter.notifyItemRemoved(position);
+                        } else {
+                            Snackbar.make(recyclerView, "Reverted !", Snackbar.LENGTH_SHORT).show();
+                            updateDatabase();
+                        }
+                    }
+                },1500);
+                    }
+                });
+
         itemTouchHelper.attachToRecyclerView(recyclerView);
         updateDatabase();
         recyclerAdapter.notifyDataSetChanged();
@@ -260,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         contentValues.put(toDoOpenHelper.time, time1);
         contentValues.put(toDoOpenHelper.detail, detail1);
         contentValues.put(toDoOpenHelper.category, category1);
-        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item2.id + ""});
+        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item1.id + ""});
 
 
         contentValues = new ContentValues();
@@ -269,9 +287,9 @@ public class MainActivity extends AppCompatActivity {
         contentValues.put(toDoOpenHelper.time, time2);
         contentValues.put(toDoOpenHelper.detail, detail2);
         contentValues.put(toDoOpenHelper.category, category2);
-        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item1.id + ""});
+        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item2.id + ""});
 
 
-        updateDatabase();
+//        updateDatabase();
     }
 }

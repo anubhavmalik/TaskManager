@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by Anubhav on 14-07-2017.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoViewHolder>{
     private Context mContext;
     private ArrayList<ToDoItem> arrayList, arrayListCopy;
     private ToDoClickListener mListener;
@@ -49,19 +49,25 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoVi
         return arrayList.size();
     }
 
-    public void filter(String newText) {
+    public void filter(String newText,boolean isChecked) {
         newText = newText.toLowerCase();
-        arrayListCopy = new ArrayList<>();
-        if (newText.length() < 0) {
-            arrayListCopy = arrayList;
+        arrayList = new ArrayList<>();
+        if (newText.length() == 0) {
+            arrayList=arrayListCopy;
         } else {
             for (int i = 0; i < arrayListCopy.size(); i++) {
                 ToDoItem toDoItem = arrayListCopy.get(i);
-                if (toDoItem.title.toLowerCase().contains(newText)) {
-                    arrayList.add(toDoItem);
+                if(isChecked==false) {
+                    if (toDoItem.title.toLowerCase().contains(newText)) {
+                        arrayList.add(toDoItem);
+                    }
+                }
+                else if(isChecked){
+                    if(toDoItem.category.toLowerCase().contains(newText)){
+                        arrayList.add(toDoItem);
+                    }
                 }
                 notifyDataSetChanged();
-                return;
             }
         }
 

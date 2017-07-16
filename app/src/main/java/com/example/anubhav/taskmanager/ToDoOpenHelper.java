@@ -18,6 +18,7 @@ public class ToDoOpenHelper extends SQLiteOpenHelper {
     public final String detail = "detail";
     public final String tablename = "To_Do_table";
     public final String category = "category";
+    public final String order="order";
 
     public ToDoOpenHelper(Context context) {
 

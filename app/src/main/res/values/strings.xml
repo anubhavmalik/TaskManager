@@ -98,4 +98,5 @@
         <item>Pickup</item>
         <item>Custom</item>
     </string-array>
+    <string name="title_activity_scrolling_details">ScrollingDetailsActivity</string>
 </resources>

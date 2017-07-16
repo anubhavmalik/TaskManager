@@ -26,7 +26,7 @@ import java.util.Calendar;
 
 public class ScrollingDetailsActivity extends AppCompatActivity/* implements AdapterView.OnItemSelectedListener */ {
 
-    TextView datetextview, timetextview, spinner_textView;
+    TextView datetextview, timetextview;
     EditText titletextview, detailtextview;
 //    Button save_button;
 //    String category_text;
@@ -44,7 +44,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         final int id = i.getIntExtra(IntentConstants.to_do_id, -1);
         category_array= new ArrayList<>();
         category_array.clear();
-        category_array.add("Work");category_array.add("Home");category_array.add("Food");category_array.add("Pickup");category_array.add("Custom");
+        category_array.add("Work");category_array.add("Home");category_array.add("Food");category_array.add("Pickup");category_array.add("Shopping");category_array.add("Others");
 
         spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,category_array);

@@ -255,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Press back " + exit_count + " more time to exit.", Toast.LENGTH_SHORT).show();
         } else {
             finish();
+//            System.exit(0);
         }
     }
 

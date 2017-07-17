@@ -21,11 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ToDoDetails" />
+        <activity android:name=".ToDoDetails"
+            android:label="Details"/>
         <activity
             android:name=".ScrollingDetailsActivity"
-            android:label="@string/title_activity_scrolling_details"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="Details"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+        <activity
+            android:name=".aboutscrollingactivity"
+            android:label="About"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

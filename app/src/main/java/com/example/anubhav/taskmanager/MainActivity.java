@@ -1,5 +1,6 @@
 package com.example.anubhav.taskmanager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -201,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
         if (id == R.id.about) {
-            Intent i = new Intent();
-            i.setAction(Intent.ACTION_SCREEN_OFF);
-            i.getAction();
+            Intent i = new Intent(this,aboutscrollingactivity.class);
+            startActivity(i);
+
         }
 
 

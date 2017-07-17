@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.anubhav.taskmanager.aboutscrollingactivity"
+    tools:showIn="@layout/activity_aboutscrollingactivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:text="You can remove and add list items. Items can be deleted by simply swiping left or right. But the application gives you an UNDO option on swiping so that any task deleted by mistake can be recovered.
+
+Also, you can move the items according to your priority up or down the list.
+
+You can search your task by it's name or category using the search bar and checkong or unchecking the checkbox provided along with it." />
+
+</android.support.v4.widget.NestedScrollView>

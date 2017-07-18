@@ -1,6 +1,5 @@
 package com.example.anubhav.taskmanager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,7 +29,7 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<ToDoItem> arrayList,toDoItems;
+    ArrayList<ToDoItem> arrayList, toDoItems;
     int ADD_REQUEST = 10, EDIT_REQUEST = 11, UNDO_FLAG = 0, exit_count = 0;
     RecyclerAdapter recyclerAdapter;
     RecyclerView recyclerView;
@@ -45,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("To-Do Manager");
         arrayList = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        checkBox=(CheckBox) findViewById(R.id.checkBox);
-
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
 
 
         recyclerAdapter = new RecyclerAdapter(this, arrayList, new RecyclerAdapter.ToDoClickListener() {
@@ -117,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 final int position = viewHolder.getAdapterPosition();
                 UNDO_FLAG = 0;
 
+
                 Snackbar.make(recyclerView, "Task Removed", Snackbar.LENGTH_LONG)
                         .setAction("UNDO", new View.OnClickListener() {
                             @Override
@@ -134,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
                             SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
                             db.delete(todoOpenHelper.tablename, "id = ?", new String[]{arrayList.get(position).id + ""});
+                            int id = arrayList.get(position).id;
                             arrayList.remove(position);
                             recyclerAdapter.notifyItemRemoved(position);
                         } else {
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
         updateArrayList();
         recyclerAdapter.notifyDataSetChanged();
-        toDoItems=new ArrayList<>();
-        toDoItems=arrayList;
+        toDoItems = new ArrayList<>();
+        toDoItems = arrayList;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                recyclerAdapter.filter(newText,checkBox.isChecked());
+                recyclerAdapter.filter(newText, checkBox.isChecked());
                 return false;
             }
         });
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
         if (id == R.id.about) {
-            Intent i = new Intent(this,aboutscrollingactivity.class);
+            Intent i = new Intent(this, aboutscrollingactivity.class);
             startActivity(i);
 
         }
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 updateArrayList();
             }
             if (resultCode == RESULT_CANCELED) {
-                Log.i("tag canceled","RESULT_CANCELED");
+                Log.i("tag canceled", "RESULT_CANCELED");
             }
         }
     }
@@ -255,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
             exit_count++;
             Toast.makeText(this, "Press back " + exit_count + " more time to exit.", Toast.LENGTH_SHORT).show();
         } else {
+            setResult(5);
             finish();
 //            System.exit(0);
         }
@@ -285,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
 //        contentValues = new ContentValues();
 //        contentValues.put(toDoOpenHelper.order, order2);
 //        long i2 = database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item2.id + ""});
-////        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item1.id + ""});
+//        database.update(toDoOpenHelper.tablename, contentValues, "id=?", new String[]{item1.id + ""});
 //        Log.i("pos ID : to ", i2 + "");
 //
 

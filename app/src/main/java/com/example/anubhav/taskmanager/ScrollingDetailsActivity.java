@@ -21,8 +21,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class ScrollingDetailsActivity extends AppCompatActivity/* implements AdapterView.OnItemSelectedListener */ {
 
@@ -198,6 +201,21 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 //    public void onNothingSelected(AdapterView<?> parent) {
 //
 //    }
+    public long getepoch(String dateformat,String timeformat) {
+        String date_time = dateformat + " " + timeformat;
+        SimpleDateFormat datetime = new SimpleDateFormat("dd//MM/yyyy hh:mm a");
+        long difference = 19800;
+        long actual_time=0;
+
+        try {
+            Date d = datetime.parse(date_time);
+            actual_time = d.getTime() + difference;
+            return actual_time;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return actual_time;
+    }
 }
 
 

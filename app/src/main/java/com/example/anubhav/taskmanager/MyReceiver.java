@@ -3,7 +3,6 @@ package com.example.anubhav.taskmanager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.NotificationCompat;
 
 public class MyReceiver extends BroadcastReceiver {
 

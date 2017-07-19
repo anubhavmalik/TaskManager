@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -42,6 +40,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
     ImageButton calendarButton, clockButton;
     Spinner spinner;
     ArrayList<String> category_array;
+    String result_speech = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +142,6 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         });
     }
 
-
     public void showDatePicker(Context context, int year, int month, int defaultdate) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -154,36 +152,6 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
             }
         }, year, month, 1);
         datePickerDialog.show();
-    }
-
-    public void showTimePicker(Context context, int hour, int minute, boolean mode) {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                Log.i("Hour of the day", hourOfDay + "");
-                Log.i("minute of the day", minute + "");
-
-                String time, minute_string = "";
-                if (minute < 10) {
-                    minute_string = "0" + minute;
-                } else if (minute > 9) {
-                    minute_string = "" + minute;
-                }
-                if (hourOfDay < 12) {
-                    time = "am";
-
-                } else {
-                    time = "pm";
-                    hourOfDay = hourOfDay - 12;
-
-                }
-                if (hourOfDay == 0) {
-                    hourOfDay = 12;
-                }
-                timetextview.setText(hourOfDay + ":" + minute_string + " " + time);
-            }
-        }, hour, minute, false);
-        timePickerDialog.show();
     }
 
 //    @Override
@@ -216,6 +184,36 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 
 //    }
 
+    public void showTimePicker(Context context, int hour, int minute, boolean mode) {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Log.i("Hour of the day", hourOfDay + "");
+                Log.i("minute of the day", minute + "");
+
+                String time, minute_string = "";
+                if (minute < 10) {
+                    minute_string = "0" + minute;
+                } else if (minute > 9) {
+                    minute_string = "" + minute;
+                }
+                if (hourOfDay < 12) {
+                    time = "am";
+
+                } else {
+                    time = "pm";
+                    hourOfDay = hourOfDay - 12;
+
+                }
+                if (hourOfDay == 0) {
+                    hourOfDay = 12;
+                }
+                timetextview.setText(hourOfDay + ":" + minute_string + " " + time);
+            }
+        }, hour, minute, false);
+        timePickerDialog.show();
+    }
+
     //    @Override
 //    public void onNothingSelected(AdapterView<?> parent) {
 //
@@ -228,7 +226,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         long epoch = 0;
         try {
-            date = (Date) formatter.parse(dateformat);
+            date = formatter.parse(dateformat);
             epoch = date.getTime();
 
         } catch (ParseException e) {
@@ -251,8 +249,6 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
         startActivityForResult(intent, REQUEST_CODE);
     }
-
-    String result_speech = "";
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

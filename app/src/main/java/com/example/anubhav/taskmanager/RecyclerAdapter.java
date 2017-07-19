@@ -73,13 +73,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoVi
 
     }
 
-    public interface ToDoClickListener {
-        void onItemClick(View view, int position);
+    public void dataupdate(){
+        notifyDataSetChanged();
     }
 
 //    public interface ToDoLongClickListener {
 //        void onItemLongClick(View view, int position);
 //    }
+
+    public interface ToDoClickListener {
+        void onItemClick(View view, int position);
+    }
 
     public static class ToDoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -125,8 +129,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoVi
         }
 
 
-    }
-    public void dataupdate(){
-        notifyDataSetChanged();
     }
 }

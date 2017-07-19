@@ -34,6 +34,7 @@ import java.util.Locale;
 
 public class ScrollingDetailsActivity extends AppCompatActivity/* implements AdapterView.OnItemSelectedListener */ {
 
+    static int idAlarm = 0 ;
     TextView datetextview, timetextview;
     EditText titletextview, detailtextview;
     ImageButton title_voice, detail_voice;
@@ -42,12 +43,25 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
     ImageButton calendarButton, clockButton;
     Spinner spinner;
     ArrayList<String> category_array;
-<<<<<<< HEAD
+    int houroftheday,minute;
     String result_speech = "";
 
-=======
-    static int idAlarm = 0 ;
->>>>>>> 93c23d8c63adde5d2529d3705bf8098062a1e2c8
+    public int getHouroftheday() {
+        return houroftheday;
+    }
+
+    public void setHouroftheday(int houroftheday) {
+        this.houroftheday = houroftheday;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,7 +144,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
                         database.insert(toDoOpenHelper.tablename, null, contentValues);
                     }
                     setResult(RESULT_OK);
-                    getepoch(new_date, new_time);
+//                    getepoch(new_date, new_time);
                     Snackbar.make(view, "Save Successful !", Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
                         @Override
                         public void onDismissed(Snackbar snackbar, int event) {
@@ -150,8 +164,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         });
     }
 
-<<<<<<< HEAD
-=======
+
     public void Alarm(String date ,String title){
 
         AlarmManager am =(AlarmManager) ScrollingDetailsActivity.this.getSystemService(Context.ALARM_SERVICE);
@@ -170,10 +183,10 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 
 
 
-        am.set(AlarmManager.RTC,getepoch(date,title),pendingIntent );
+        am.set(AlarmManager.RTC,getepoch(date,title,getHouroftheday(),getMinute()),pendingIntent );
     }
 
->>>>>>> 93c23d8c63adde5d2529d3705bf8098062a1e2c8
+
     public void showDatePicker(Context context, int year, int month, int defaultdate) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -222,6 +235,8 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 Log.i("Hour of the day", hourOfDay + "");
                 Log.i("minute of the day", minute + "");
+                setHouroftheday(hourOfDay);
+                setMinute(minute);
 
                 String time, minute_string = "";
                 if (minute < 10) {
@@ -251,8 +266,9 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 //
 //    }
 //    public long timeepoch();
-    public long getepoch(String dateformat, String timeformat) {
+    public long getepoch(String dateformat,String title, int houroftheday, int minute) {
         DateFormat formatter;
+        long time_epoch=houroftheday*3600+minute*60;
         Date date = null;
 
         formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -267,7 +283,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         }
         Log.i("date :", date + "");
         Log.i("epoch :", epoch + "");
-        return epoch;
+        return epoch+time_epoch;
     }
 
     public void titlevoicebuttonclicked(View v) {

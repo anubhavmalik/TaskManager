@@ -235,8 +235,8 @@
             android:layout_marginRight="8dp"
             app:layout_constraintRight_toRightOf="@+id/titleEditText"
             app:layout_constraintBottom_toBottomOf="@+id/titleEditText"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintHorizontal_bias="1.0" />
+            android:layout_marginBottom="0dp"
+            app:layout_constraintHorizontal_bias="0.029" />
 
         <ImageButton
             android:id="@+id/voice_btn_details"
@@ -248,9 +248,9 @@
             app:layout_constraintLeft_toLeftOf="@+id/detailEditText"
             android:layout_marginRight="8dp"
             app:layout_constraintRight_toRightOf="@+id/detailEditText"
-            app:layout_constraintHorizontal_bias="0.977"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintBottom_toBottomOf="@+id/detailEditText"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="0dp" />
 
 
     </android.support.constraint.ConstraintLayout>

@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 /**
- * Created by sehaj.gulati08 on 19-07-2017.
+ * Created by anubhavmalik on 19-07-2017.
  */
 
 public class AlarmReceiver extends BroadcastReceiver {

@@ -141,27 +141,32 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
                 } else {
                     titletextview.setError("Title can't be empty.");
                 }
-                AlarmManager am =(AlarmManager) ScrollingDetailsActivity.this.getSystemService(Context.ALARM_SERVICE);
 
-                Intent i = new Intent(ScrollingDetailsActivity.this,AlarmReceiver.class);
-                i.putExtra("titleAlarm",new_title);
-                i.putExtra("idAlarm",idAlarm++);
-                Log.i("SDAidAlarm",""+idAlarm);
-
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(ScrollingDetailsActivity.this,idAlarm,i, 0);
-//                PendingIntent pendingIntent2 = PendingIntent.getBroadcast(MainActivity.this,1,i, 0);
-
-                Log.i("AlarmId!",""+idAlarm);
-
-
-
-
-                am.set(AlarmManager.RTC,getepoch(new_date,new_time),pendingIntent );
+                Alarm(new_date,new_title);
             }
         });
     }
 
+    public void Alarm(String date ,String title){
+
+        AlarmManager am =(AlarmManager) ScrollingDetailsActivity.this.getSystemService(Context.ALARM_SERVICE);
+
+        Intent i = new Intent(ScrollingDetailsActivity.this,AlarmReceiver.class);
+        i.putExtra("titleAlarm",title);
+        i.putExtra("idAlarm",idAlarm++);
+        Log.i("SDAidAlarm",""+idAlarm);
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ScrollingDetailsActivity.this,idAlarm,i, 0);
+//                PendingIntent pendingIntent2 = PendingIntent.getBroadcast(MainActivity.this,1,i, 0);
+
+        Log.i("AlarmId!",""+idAlarm);
+
+
+
+
+        am.set(AlarmManager.RTC,getepoch(date,title),pendingIntent );
+    }
 
     public void showDatePicker(Context context, int year, int month, int defaultdate) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {

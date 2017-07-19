@@ -1,6 +1,8 @@
 package com.example.anubhav.taskmanager;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,8 +42,12 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
     ImageButton calendarButton, clockButton;
     Spinner spinner;
     ArrayList<String> category_array;
+<<<<<<< HEAD
     String result_speech = "";
 
+=======
+    static int idAlarm = 0 ;
+>>>>>>> 93c23d8c63adde5d2529d3705bf8098062a1e2c8
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +125,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
                     contentValues.put(toDoOpenHelper.detail, new_detail);
                     contentValues.put(toDoOpenHelper.category, new_category);
                     if (id != -1) {
-                        database.update(toDoOpenHelper.tablename, contentValues, "id = ? ", new String[]{id + ""});
+                       database.update(toDoOpenHelper.tablename, contentValues, "id = ? ", new String[]{id + ""});
                     } else {
                         database.insert(toDoOpenHelper.tablename, null, contentValues);
                     }
@@ -138,17 +144,43 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
                 } else {
                     titletextview.setError("Title can't be empty.");
                 }
+
+                Alarm(new_date,new_title);
             }
         });
     }
 
+<<<<<<< HEAD
+=======
+    public void Alarm(String date ,String title){
+
+        AlarmManager am =(AlarmManager) ScrollingDetailsActivity.this.getSystemService(Context.ALARM_SERVICE);
+
+        Intent i = new Intent(ScrollingDetailsActivity.this,AlarmReceiver.class);
+        i.putExtra("titleAlarm",title);
+        i.putExtra("idAlarm",idAlarm++);
+        Log.i("SDAidAlarm",""+idAlarm);
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ScrollingDetailsActivity.this,idAlarm,i, 0);
+//                PendingIntent pendingIntent2 = PendingIntent.getBroadcast(MainActivity.this,1,i, 0);
+
+        Log.i("AlarmId!",""+idAlarm);
+
+
+
+
+        am.set(AlarmManager.RTC,getepoch(date,title),pendingIntent );
+    }
+
+>>>>>>> 93c23d8c63adde5d2529d3705bf8098062a1e2c8
     public void showDatePicker(Context context, int year, int month, int defaultdate) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
-                datetextview.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                datetextview.setText(dayOfMonth + "-" + (month + 1) + "-" + year);
             }
         }, year, month, 1);
         datePickerDialog.show();
@@ -230,10 +262,11 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
             epoch = date.getTime();
 
         } catch (ParseException e) {
+            Log.i("Exception comment", "ParseException");
             e.printStackTrace();
         }
         Log.i("date :", date + "");
-        Log.i("date :", epoch + "");
+        Log.i("epoch :", epoch + "");
         return epoch;
     }
 

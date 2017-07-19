@@ -11,11 +11,15 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:visibility="visible">
 
         <EditText
             android:id="@+id/titleEditText"
             android:layout_width="337dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_height="83dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
@@ -42,6 +46,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="9dp"
             android:layout_marginRight="8dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_marginStart="9dp"
             android:layout_marginTop="27dp"
             android:gravity="start"
@@ -217,6 +223,36 @@
             app:layout_constraintLeft_toLeftOf="@+id/detailEditText"
             app:layout_constraintTop_toBottomOf="@+id/titleEditText"
             app:layout_constraintVertical_bias="0.454" />
+
+        <ImageButton
+            android:id="@+id/voice_btn_title"
+            android:layout_width="53dp"
+            android:layout_height="47dp"
+            app:srcCompat="@mipmap/mike_icon"
+            android:onClick="titlevoicebuttonclicked"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="@+id/titleEditText"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="@+id/titleEditText"
+            app:layout_constraintBottom_toBottomOf="@+id/titleEditText"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintHorizontal_bias="1.0" />
+
+        <ImageButton
+            android:id="@+id/voice_btn_details"
+            android:layout_width="53dp"
+            android:layout_height="47dp"
+            app:srcCompat="@mipmap/mike_icon"
+            android:onClick="detailvoicebuttonclicked"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="@+id/detailEditText"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="@+id/detailEditText"
+            app:layout_constraintHorizontal_bias="0.977"
+            app:layout_constraintBottom_toBottomOf="@+id/detailEditText"
+            android:layout_marginBottom="12dp" />
+
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v4.widget.NestedScrollView>

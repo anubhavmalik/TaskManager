@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -21,21 +23,26 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ScrollingDetailsActivity extends AppCompatActivity/* implements AdapterView.OnItemSelectedListener */ {
 
     TextView datetextview, timetextview;
     EditText titletextview, detailtextview;
-//    Button save_button;
+    ImageButton title_voice, detail_voice;
+    //    Button save_button;
 //    String category_text;
     ImageButton calendarButton, clockButton;
     Spinner spinner;
     ArrayList<String> category_array;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +52,17 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 
         Intent i = getIntent();
         final int id = i.getIntExtra(IntentConstants.to_do_id, -1);
-        category_array= new ArrayList<>();
+        category_array = new ArrayList<>();
         category_array.clear();
-        category_array.add("Work");category_array.add("Home");category_array.add("Food");category_array.add("Pickup");category_array.add("Shopping");category_array.add("Others");
+        category_array.add("Work");
+        category_array.add("Home");
+        category_array.add("Food");
+        category_array.add("Pickup");
+        category_array.add("Shopping");
+        category_array.add("Others");
 
         spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,category_array);
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, category_array);
         spinner.setAdapter(arrayAdapter);
 //        spinner.setOnItemSelectedListener(this);
         spinner.setSelection(category_array.indexOf(i.getStringExtra(IntentConstants.to_do_category)));
@@ -62,6 +74,8 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         detailtextview.setText(i.getStringExtra(IntentConstants.to_do_details));
         timetextview = (TextView) findViewById(R.id.timeEditText);
         timetextview.setText(i.getStringExtra(IntentConstants.to_do_time));
+        title_voice = (ImageButton) findViewById(R.id.voice_btn_title);
+        title_voice = (ImageButton) findViewById(R.id.voice_btn_title);
         clockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +91,7 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
             @Override
             public void onClick(View v) {
                 Calendar newCalendar = Calendar.getInstance();
+                Log.i("Calendar . instance", newCalendar + "");
                 int initialmonth = newCalendar.get(java.util.Calendar.MONTH);
                 int initialyear = newCalendar.get(java.util.Calendar.YEAR);
 
@@ -110,14 +125,16 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
                         database.insert(toDoOpenHelper.tablename, null, contentValues);
                     }
                     setResult(RESULT_OK);
-                    Snackbar.make(view, "Task saved.", Snackbar.LENGTH_SHORT).show();
-                    Handler h = new Handler();
-                    h.postDelayed(new Runnable() {
+                    getepoch(new_date, new_time);
+                    Snackbar.make(view, "Save Successful !", Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
                         @Override
-                        public void run() {
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            super.onDismissed(snackbar, event);
+
                             finish();
                         }
-                    }, 1000);
+                    }).show();
+
 
                 } else {
                     titletextview.setError("Title can't be empty.");
@@ -125,7 +142,6 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
             }
         });
     }
-
 
 
     public void showDatePicker(Context context, int year, int month, int defaultdate) {
@@ -144,6 +160,9 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
         TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Log.i("Hour of the day", hourOfDay + "");
+                Log.i("minute of the day", minute + "");
+
                 String time, minute_string = "";
                 if (minute < 10) {
                     minute_string = "0" + minute;
@@ -197,25 +216,76 @@ public class ScrollingDetailsActivity extends AppCompatActivity/* implements Ada
 
 //    }
 
-//    @Override
+    //    @Override
 //    public void onNothingSelected(AdapterView<?> parent) {
 //
 //    }
-    public long getepoch(String dateformat,String timeformat) {
-        String date_time = dateformat + " " + timeformat;
-        SimpleDateFormat datetime = new SimpleDateFormat("dd//MM/yyyy hh:mm a");
-        long difference = 19800;
-        long actual_time=0;
+//    public long timeepoch();
+    public long getepoch(String dateformat, String timeformat) {
+        DateFormat formatter;
+        Date date = null;
 
+        formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        long epoch = 0;
         try {
-            Date d = datetime.parse(date_time);
-            actual_time = d.getTime() + difference;
-            return actual_time;
+            date = (Date) formatter.parse(dateformat);
+            epoch = date.getTime();
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return actual_time;
+        Log.i("date :", date + "");
+        Log.i("date :", epoch + "");
+        return epoch;
+    }
+
+    public void titlevoicebuttonclicked(View v) {
+        int REQUEST_CODE = 50;
+        String DIALOG_TEXT = "What is the title ?";
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        intent.putExtra("Button",id);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, DIALOG_TEXT);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, REQUEST_CODE);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    String result_speech = "";
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<String> speech;
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 50||requestCode==51) {
+                speech = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                result_speech = speech.get(0);
+                if (requestCode == 50) {
+                    titletextview.setText(result_speech);
+                } else if (requestCode == 51) {
+                    detailtextview.setText(result_speech);
+                }
+            }
+        }
+
+    }
+
+    public void detailvoicebuttonclicked(View v) {
+        int REQUEST_CODE = 51;
+        String DIALOG_TEXT = "Tell us the details.";
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        intent.putExtra("Button",id);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, DIALOG_TEXT);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, REQUEST_CODE);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        startActivityForResult(intent, REQUEST_CODE);
     }
 }
 
 
+//1315852200000
+//        1292225400000

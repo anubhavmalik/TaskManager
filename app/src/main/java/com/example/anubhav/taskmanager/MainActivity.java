@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         checkBox = (CheckBox) findViewById(R.id.checkBox);
 
 
+
         recyclerAdapter = new RecyclerAdapter(this, arrayList, new RecyclerAdapter.ToDoClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -123,12 +124,10 @@ public class MainActivity extends AppCompatActivity {
                                 UNDO_FLAG = undoClicked();
                                 updateArrayList();
                             }
-                        }).setActionTextColor(Color.BLUE).show();
-
-                Handler h = new Handler();
-                h.postDelayed(new Runnable() {
+                        }).setActionTextColor(Color.BLUE).setCallback(new Snackbar.Callback(){
                     @Override
-                    public void run() {
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        super.onDismissed(snackbar, event);
                         if (UNDO_FLAG == 0) {
                             ToDoOpenHelper todoOpenHelper = ToDoOpenHelper.getTodoOpenHelperInstance(MainActivity.this);
                             SQLiteDatabase db = todoOpenHelper.getWritableDatabase();
@@ -140,8 +139,17 @@ public class MainActivity extends AppCompatActivity {
                             Snackbar.make(recyclerView, "Reverted !", Snackbar.LENGTH_SHORT).show();
                             updateArrayList();
                         }
+
                     }
-                }, 1500);
+                }).show();
+
+//                Handler h = new Handler();
+//                h.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+
+//                    }
+//                }, 1500);
             }
         });
 
@@ -259,6 +267,12 @@ public class MainActivity extends AppCompatActivity {
             finish();
 //            System.exit(0);
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        recyclerAdapter.notifyDataSetChanged();
     }
 
     public int undoClicked() {

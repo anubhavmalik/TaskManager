@@ -124,5 +124,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ToDoVi
 
         }
 
+
+    }
+    public void dataupdate(){
+        notifyDataSetChanged();
     }
 }

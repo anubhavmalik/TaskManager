@@ -22,6 +22,13 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.example.anubhav.taskmanager.Adapter.RecyclerAdapter;
+import com.example.anubhav.taskmanager.Constants.IntentConstants;
+import com.example.anubhav.taskmanager.Details.ScrollingDetailsActivity;
+import com.example.anubhav.taskmanager.Model.ToDoItem;
+import com.example.anubhav.taskmanager.OpenHelper.ToDoOpenHelper;
+import com.example.anubhav.taskmanager.Resources.aboutscrollingactivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 

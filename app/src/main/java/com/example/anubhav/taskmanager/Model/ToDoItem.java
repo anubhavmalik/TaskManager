@@ -1,12 +1,12 @@
-package com.example.anubhav.taskmanager;
+package com.example.anubhav.taskmanager.Model;
 
 /**
  * Created by Anubhav on 03-07-2017.
  */
 
 public class ToDoItem {
-    String title, date, time, details, category;
-    int id;//,order;
+    public String title, date, time, details, category;
+    public int id;//,order;
 
 
     public ToDoItem(int id, String title, String date, String time, String details, String category){//, int order) {

@@ -1,4 +1,4 @@
-package com.example.anubhav.taskmanager;
+package com.example.anubhav.taskmanager.Reciever;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.example.anubhav.taskmanager.MainActivity;
 
 /**
  * Created by anubhavmalik on 19-07-2017.

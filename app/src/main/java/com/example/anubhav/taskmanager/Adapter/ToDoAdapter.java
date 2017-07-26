@@ -1,4 +1,4 @@
-package com.example.anubhav.taskmanager;
+package com.example.anubhav.taskmanager.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.anubhav.taskmanager.R;
+import com.example.anubhav.taskmanager.Model.ToDoItem;
 
 import java.util.ArrayList;
 

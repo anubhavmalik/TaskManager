@@ -1,4 +1,4 @@
-package com.example.anubhav.taskmanager;
+package com.example.anubhav.taskmanager.Details;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -23,6 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.example.anubhav.taskmanager.Constants.IntentConstants;
+import com.example.anubhav.taskmanager.OpenHelper.ToDoOpenHelper;
+import com.example.anubhav.taskmanager.R;
 
 import java.util.Calendar;
 
